@@ -13,3 +13,5 @@ Pinout:
 
     USART1_TX PB6   D5
     USART1_RX PB7   D6
+
+The above pinout is for the Nucleo-32 L432KC board
