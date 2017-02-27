@@ -37,7 +37,6 @@
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
-#include "imu.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -65,6 +64,7 @@ void Error_Handler(void);
 
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -95,9 +95,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 	  ImuLoop();
-	  HAL_Delay(20);
+  /* USER CODE END WHILE */
+
+  /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 

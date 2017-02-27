@@ -6,7 +6,7 @@
 
 void MyBlink() {
 	  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-	  HAL_Delay(2);
+	  HAL_Delay(1);
 }
 
 uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {

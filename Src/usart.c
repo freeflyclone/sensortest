@@ -78,8 +78,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     __HAL_RCC_USART1_CLK_ENABLE();
   
     /**USART1 GPIO Configuration    
-    PB6 (D5)    ------> USART1_TX
-    PB7 (D4)    ------> USART1_RX
+    PB6     ------> USART1_TX
+    PB7     ------> USART1_RX 
     */
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
