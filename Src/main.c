@@ -84,6 +84,8 @@ int main(void)
   MX_USART1_UART_Init();
 
   /* USER CODE BEGIN 2 */
+  HAL_Delay(10);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"Hello World!\r\n", 15, 10);
 
   /* USER CODE END 2 */
 
@@ -92,7 +94,7 @@ int main(void)
   while (1)
   {
 	  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-	  HAL_Delay(2);
+	  HAL_Delay(20);
   }
   /* USER CODE END 3 */
 
