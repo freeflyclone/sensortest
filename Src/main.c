@@ -37,6 +37,7 @@
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
+#include "imu.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -64,7 +65,6 @@ void Error_Handler(void);
 
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -87,13 +87,16 @@ int main(void)
   HAL_Delay(10);
   HAL_UART_Transmit(&huart1, (uint8_t*)"Hello World!\r\n", 15, 10);
 
+  ImuInit(&hi2c1);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	  //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	  ImuLoop();
 	  HAL_Delay(20);
   }
   /* USER CODE END 3 */
