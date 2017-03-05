@@ -33,13 +33,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l4xx_hal.h"
+
+/* USER CODE BEGIN Includes */
 #include "i2c.h"
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
-
-/* USER CODE BEGIN Includes */
-
+#include "imu.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -85,8 +85,6 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   HAL_Delay(10);
-  HAL_UART_Transmit(&huart1, (uint8_t*)"Hello World!\r\n", 15, 10);
-
   ImuInit(&hi2c1);
   HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
   /* USER CODE END 2 */
