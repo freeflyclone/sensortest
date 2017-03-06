@@ -2,6 +2,6 @@
 #define IMU_H
 
 extern void ImuInit();
-extern void ImuLoop();
+extern void ImuRead();
 
 #endif

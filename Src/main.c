@@ -59,7 +59,13 @@ void Error_Handler(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+uint8_t receive1;
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART2) {
+		HAL_UART_Transmit(&huart1, &receive1, 1, 10);
+		HAL_UART_Receive_IT(huart, (uint8_t*)&receive1, 1);
+	}
+}
 /* USER CODE END 0 */
 
 int main(void)
@@ -88,13 +94,18 @@ int main(void)
   HAL_Delay(10);
   ImuInit(&hi2c1);
   HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
+
+  HAL_UART_Receive_IT(&huart2, (uint8_t*)&receive1, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  ImuLoop();
+	  ImuRead();
+	  //while (HAL_UART_Receive(&huart2, (uint8_t*)&c, 1, 10) == HAL_OK)
+		  //HAL_UART_Transmit(&huart1, (uint8_t*)&c, 1, 10);
+	  HAL_Delay(1);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
