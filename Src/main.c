@@ -60,10 +60,15 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN 0 */
 uint8_t receive1;
+uint8_t receive2;
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	if (huart->Instance == USART2) {
-		HAL_UART_Transmit(&huart1, &receive1, 1, 10);
+	if (huart->Instance == USART1) {
+		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 		HAL_UART_Receive_IT(huart, (uint8_t*)&receive1, 1);
+	}
+	else if (huart->Instance == USART2) {
+		HAL_UART_Transmit(&huart1, &receive2, 1, 10);
+		HAL_UART_Receive_IT(huart, (uint8_t*)&receive2, 1);
 	}
 }
 /* USER CODE END 0 */
@@ -91,11 +96,17 @@ int main(void)
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
+
   HAL_Delay(10);
   ImuInit(&hi2c1);
   HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
+  HAL_Delay(10);
 
-  HAL_UART_Receive_IT(&huart2, (uint8_t*)&receive1, 1);
+  /* Need to call HAL_UART_Receive_IT() to enable RX interrupts */
+  /* (probably same for Transmit as well) */
+  HAL_UART_Receive_IT(&huart1, (uint8_t*)&receive1, 1);
+  HAL_UART_Receive_IT(&huart2, (uint8_t*)&receive2, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
