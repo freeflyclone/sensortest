@@ -56,20 +56,20 @@
 
 /* Variables -----------------------------------------------------------------*/
 osThreadId defaultTaskHandle;
-osThreadId LED1Handle;
 
 /* USER CODE BEGIN Variables */
-
+TaskHandle_t ledTaskHandle;
+TaskHandle_t imuTaskHandle;
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
 void StartDefaultTask(void const * argument);
-void LED_Thread1(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
-
+void IMUTask(void *);
+void LEDTask(void *);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -95,15 +95,13 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* definition and creation of LED1 */
-  osThreadDef(LED1, LED_Thread1, osPriorityIdle, 0, 128);
-  LED1Handle = osThreadCreate(osThread(LED1), NULL);
+  //osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  //defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  xTaskCreate(IMUTask, "IMURead", 128, (void *)1, tskIDLE_PRIORITY+1, &imuTaskHandle);
+  xTaskCreate(LEDTask, "LedBlink", 128, (void *)1, tskIDLE_PRIORITY, &ledTaskHandle);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -116,33 +114,31 @@ void StartDefaultTask(void const * argument)
 {
 
   /* USER CODE BEGIN StartDefaultTask */
-  ImuInit(&hi2c1);
-  HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
 
   /* Infinite loop */
   for(;;)
   {
-	ImuRead();
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
 }
 
-/* LED_Thread1 function */
-void LED_Thread1(void const * argument)
-{
-  /* USER CODE BEGIN LED_Thread1 */
-  /* Infinite loop */
-  for(;;)
-  {
-	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-    osDelay(1);
-  }
-  /* USER CODE END LED_Thread1 */
-}
-
 /* USER CODE BEGIN Application */
-     
+void IMUTask(void *pvParameters) {
+  ImuInit(&hi2c1);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
+
+  while(1) {
+	ImuRead();
+	osDelay(1);
+  }
+}
+void LEDTask(void *pvParameters) {
+  while(1) {
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	vTaskDelay(1);
+  }
+}
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
