@@ -17,10 +17,14 @@ uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 	if ( (status = AccelInit(hi2c)) != HAL_OK)
 		return status;
 
+	if ( (status = MagInit(hi2c)) != HAL_OK)
+		return status;
+
 	return status;
 }
 
 void ImuRead() {
 	GyroRead();
 	AccelRead();
+	MagRead();
 }

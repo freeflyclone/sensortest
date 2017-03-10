@@ -40,9 +40,34 @@ void AccelRead(){
 uint8_t MagInit(I2C_HandleTypeDef *hi2c) {
 	HAL_StatusTypeDef status = HAL_OK;
 
+	mag.write = MAG_WRITE_ADDR;
+	mag.read = MAG_READ_ADDR;
+	mag.hi2c = hi2c;
+	mag.data[0] = CRA;
+	mag.data[1] = 0x1C;		// No Temp Sensor, Mininum data rate 220Hz
+	mag.data[2] = 0x20;		// CRB: +- 1.3
+	mag.data[3] = 0x00;		// continuous conversion mode.
+
+	while ( (status = HAL_I2C_Master_Transmit(mag.hi2c, mag.write, mag.data, 4, 20)) != HAL_OK)
+		HAL_Delay(1);
+
+	while ( (status = HAL_I2C_Master_Receive(mag.hi2c, mag.read, mag.data, 1, 20)) != HAL_OK)
+		HAL_Delay(1);
+
+	if (mag.data[0] != 0x1c)
+		return HAL_ERROR;
+
 	return status;
 }
 
 void MagRead() {
+	HAL_StatusTypeDef status = HAL_OK;
 
+	mag.data[0] = M_OUT_X_H | 0x80; //AUTO_INCREMENT;
+
+	while ( (status = HAL_I2C_Master_Transmit(mag.hi2c, mag.write, mag.data, 1, 20)) != HAL_OK)
+		HAL_Delay(1);
+
+	while ( (status = HAL_I2C_Master_Receive(mag.hi2c, mag.read, mag.data, 6, 20)) != HAL_OK)
+		HAL_Delay(1);
 }
