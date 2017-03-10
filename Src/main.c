@@ -50,7 +50,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "imu.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -109,16 +109,6 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-  HAL_Delay(10);
-  ImuInit(&hi2c1);
-  HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
-  HAL_Delay(10);
-
-  /* Need to call HAL_UART_Receive_IT() to enable RX interrupts */
-  /* (probably same for Transmit as well) */
-  HAL_UART_Receive_IT(&huart1, (uint8_t*)&receive1, 1);
-  HAL_UART_Receive_IT(&huart2, (uint8_t*)&receive2, 1);
-
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -133,10 +123,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  ImuRead();
-	  //while (HAL_UART_Receive(&huart2, (uint8_t*)&c, 1, 10) == HAL_OK)
-		  //HAL_UART_Transmit(&huart1, (uint8_t*)&c, 1, 10);
-	  HAL_Delay(1);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

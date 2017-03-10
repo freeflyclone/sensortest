@@ -48,6 +48,9 @@
 
 /* USER CODE BEGIN Includes */     
 #include "gpio.h"
+#include "i2c.h"
+#include "usart.h"
+#include "imu.h"
 
 /* USER CODE END Includes */
 
@@ -113,9 +116,13 @@ void StartDefaultTask(void const * argument)
 {
 
   /* USER CODE BEGIN StartDefaultTask */
+  ImuInit(&hi2c1);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"IMU Complete\r\n", 15, 10);
+
   /* Infinite loop */
   for(;;)
   {
+	ImuRead();
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
