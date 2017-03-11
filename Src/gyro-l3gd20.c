@@ -28,10 +28,18 @@ void GyroRead() {
 
 	gyro.data[0] = OUT_X_L | AUTO_INCREMENT;
 
-	while ( (status = HAL_I2C_Master_Transmit(gyro.hi2c, gyro.write, gyro.data, 1, 20)) != HAL_OK)
+	while ( (status = HAL_I2C_Master_Transmit(gyro.hi2c, gyro.write, gyro.data, 1, 10)) != HAL_OK)
 		HAL_Delay(1);
 
-	while ( (status = HAL_I2C_Master_Receive(gyro.hi2c, gyro.read, gyro.data, 6, 20)) != HAL_OK)
+	while ( (status = HAL_I2C_Master_Receive(gyro.hi2c, gyro.read, gyro.data, 6, 10)) != HAL_OK)
 		HAL_Delay(1);
+}
 
+void GyroReadStart() {
+	gyro.data[0] = OUT_X_L | AUTO_INCREMENT;
+	HAL_I2C_Master_Transmit_IT(gyro.hi2c, gyro.write, gyro.data, 1);
+}
+
+void GyroReadEnd() {
+	HAL_I2C_Master_Receive_IT(gyro.hi2c, gyro.read, gyro.data, 6);
 }

@@ -46,7 +46,10 @@ enum GyroRegisters{
 	INT1_DURATION
 };
 
+extern Gyro_t gyro;
 extern uint8_t GyroInit(I2C_HandleTypeDef *);
 extern void GyroRead();
+extern void GyroReadStart();
+extern void GyroReadEnd();
 
 #endif // GYRO_L3GD20_H

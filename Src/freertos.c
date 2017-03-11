@@ -99,7 +99,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  xTaskCreate(LEDTask, "LedBlink", 128, (void *)1, tskIDLE_PRIORITY, &ledTaskHandle);
+  //xTaskCreate(LEDTask, "LedBlink", 128, (void *)1, tskIDLE_PRIORITY, &ledTaskHandle);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -116,7 +116,7 @@ void ImuTask(void const * argument)
 
   while(1) {
 	ImuRead();
-	osDelay(1);
+	//osDelay(1);
   }
   /* USER CODE END ImuTask */
 }
