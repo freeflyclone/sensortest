@@ -1,4 +1,5 @@
 #include "main.h"
+#include "usart.h"
 #include "stm32l4xx_hal.h"
 
 #include "gyro-l3gd20.h"
@@ -19,6 +20,8 @@ uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 
 	if ( (status = MagInit(hi2c)) != HAL_OK)
 		return status;
+
+	HAL_UART_Transmit(&huart1, (uint8_t*)"ImuInit Complete\r\n", 18, 10);
 
 	return status;
 }

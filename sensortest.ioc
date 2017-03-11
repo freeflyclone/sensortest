@@ -1,7 +1,7 @@
 #MicroXplorer Configuration settings - do not modify
 FREERTOS.FootprintOK=true
 FREERTOS.IPParameters=Tasks01,FootprintOK,configUSE_COUNTING_SEMAPHORES
-FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask,Default
+FREERTOS.Tasks01=imuTask,2,128,ImuTask,Default
 FREERTOS.configUSE_COUNTING_SEMAPHORES=1
 File.Version=6
 I2C1.I2C_Speed_Mode=I2C_Fast

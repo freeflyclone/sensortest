@@ -54,7 +54,7 @@ uint8_t MagInit(I2C_HandleTypeDef *hi2c) {
 	while ( (status = HAL_I2C_Master_Receive(mag.hi2c, mag.read, mag.data, 1, 20)) != HAL_OK)
 		HAL_Delay(1);
 
-	if (mag.data[0] != 0x1c)
+	if (mag.data[1] != 0x1c)
 		return HAL_ERROR;
 
 	return status;
