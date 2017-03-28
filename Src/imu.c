@@ -31,9 +31,14 @@ uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 
 /*
  * ImuRead() called from ImuTask (defined in freertos.c) infinite loop
+ *   Each sensor read function causes this task to pause waiting for
+ *   the I2C / DMA interrupt that signals the completion of each
+ *   request for I2C data from the respective sensor.
  */
 void ImuRead() {
 	GyroRead();
+	AccelRead();
+	MagRead();
 }
 
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
