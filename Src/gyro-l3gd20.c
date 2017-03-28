@@ -44,7 +44,7 @@ void GyroReadStart() {
 }
 
 void GyroReadEnd() {
-	HAL_I2C_Master_Receive_IT(gyro.hi2c, gyro.read, gyro.data[gyro.pingPong&1], 6);
+	HAL_I2C_Master_Receive_DMA(gyro.hi2c, gyro.read, gyro.data[gyro.pingPong&1], 6);
 	gyro.pingPong++;
 	gyro.readInProgress = 0;
 }
