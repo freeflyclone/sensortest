@@ -29,20 +29,35 @@ uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 	return status;
 }
 
+/*
+ * ImuRead() called from ImuTask (defined in freertos.c) infinite loop
+ */
 void ImuRead() {
 	const TickType_t blockTime = 10;
 
+	// Read gyro starts with transmitting device register address
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 	GyroReadStart();
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	// ... wait for transmitting of register address to complete ...
 	ulTaskNotifyTake(pdFALSE, blockTime);
+
+	// ... then issue I2C interrupt-based read request ...
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 	GyroReadEnd();
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	// ... and wait for it to complete.
 	ulTaskNotifyTake(pdFALSE, blockTime);
+
+	// signal ImuRead() complete
+	//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 }
 
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 	BaseType_t taskWoken;
 	taskWoken = pdFALSE;
 
-	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
 	vTaskNotifyGiveFromISR(imuTask, &taskWoken);
 	portYIELD_FROM_ISR(taskWoken);
@@ -52,7 +67,7 @@ void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
 	BaseType_t taskWoken;
 	taskWoken = pdFALSE;
 
-	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+	//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
 	vTaskNotifyGiveFromISR(imuTask, &taskWoken);
 	portYIELD_FROM_ISR(taskWoken);

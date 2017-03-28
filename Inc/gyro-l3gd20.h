@@ -13,7 +13,9 @@ typedef struct _Gyro_t {
 	I2C_HandleTypeDef *hi2c;
 	uint16_t write;
 	uint16_t read;
-	uint8_t data[16];
+	uint8_t data[2][8];
+	uint8_t pingPong;
+	uint8_t readInProgress;
 } Gyro_t;
 
 enum GyroRegisters{
