@@ -19,7 +19,7 @@ uint8_t GyroInit(I2C_HandleTypeDef *hi2c) {
 	while ( (status = HAL_I2C_Master_Receive(gyro.hi2c, gyro.read, gyro.data[0], 1, 20)) != HAL_OK)
 		HAL_Delay(1);
 
-	if (gyro.data[0] != 0xFF)
+	if (gyro.data[0][0] != 0xFF)
 		return HAL_ERROR;
 
 	return status;

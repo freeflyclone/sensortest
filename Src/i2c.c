@@ -46,12 +46,14 @@
 #include "i2c.h"
 
 #include "gpio.h"
+#include "dma.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 I2C_HandleTypeDef hi2c1;
+DMA_HandleTypeDef hdma_i2c1_rx;
 
 /* I2C1 init function */
 void MX_I2C1_Init(void)
@@ -104,6 +106,24 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
     /* Peripheral clock enable */
     __HAL_RCC_I2C1_CLK_ENABLE();
 
+    /* Peripheral DMA init*/
+  
+    hdma_i2c1_rx.Instance = DMA1_Channel7;
+    hdma_i2c1_rx.Init.Request = DMA_REQUEST_3;
+    hdma_i2c1_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_i2c1_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_i2c1_rx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_i2c1_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_i2c1_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_i2c1_rx.Init.Mode = DMA_NORMAL;
+    hdma_i2c1_rx.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_i2c1_rx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(i2cHandle,hdmarx,hdma_i2c1_rx);
+
     /* Peripheral interrupt init */
     HAL_NVIC_SetPriority(I2C1_EV_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
@@ -129,6 +149,9 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
     PA10     ------> I2C1_SDA 
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
+
+    /* Peripheral DMA DeInit*/
+    HAL_DMA_DeInit(i2cHandle->hdmarx);
 
     /* Peripheral interrupt Deinit*/
     HAL_NVIC_DisableIRQ(I2C1_EV_IRQn);
