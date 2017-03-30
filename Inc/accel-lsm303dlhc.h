@@ -68,6 +68,7 @@ typedef struct _Accel_t {
 	uint8_t data[16];
 } Accel_t;
 
+extern Accel_t accel;
 extern uint8_t AccelInit(I2C_HandleTypeDef *);
 extern void AccelRead();
 
@@ -78,6 +79,7 @@ typedef struct _Mag_t {
 	uint8_t data[16];
 } Mag_t;
 
+extern Mag_t mag;
 extern uint8_t MagInit(I2C_HandleTypeDef *);
 extern void MagRead();
 

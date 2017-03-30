@@ -44,6 +44,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
@@ -51,6 +52,9 @@
 #include "i2c.h"
 #include "usart.h"
 #include "imu.h"
+
+#include "gyro-l3gd20.h"
+#include "accel-lsm303dlhc.h"
 
 /* USER CODE END Includes */
 
@@ -60,6 +64,8 @@ osThreadId imuTaskHandle;
 /* USER CODE BEGIN Variables */
 TaskHandle_t ledTaskHandle;
 TaskHandle_t imuTaskHandle;
+TaskHandle_t usartTaskHandle;
+QueueHandle_t usartQueue;
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -69,6 +75,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
 void LEDTask(void *);
+void USARTTask(void *);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -99,6 +106,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  xTaskCreate(USARTTask, "USARTTask", 128, (void *)1, tskIDLE_PRIORITY+1, &usartTaskHandle);
   //xTaskCreate(LEDTask, "LedBlink", 128, (void *)1, tskIDLE_PRIORITY, &ledTaskHandle);
   /* USER CODE END RTOS_THREADS */
 
@@ -127,6 +135,37 @@ void LEDTask(void *pvParameters) {
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 	vTaskDelay(1);
   }
+}
+
+void USARTTask(void *pvParameters) {
+	uint16_t queueItem[9];
+	uint8_t outBuff[36+8+2+1];
+	static uint8_t hexChars[] = "0123456789ABCDEF";
+	int i,j;
+
+	if ( (usartQueue = xQueueCreate(4, 18)) == NULL)
+		return;
+
+	HAL_UART_Transmit(&huart1, (uint8_t*)"USARTTask init complete\r\n", 25, 10);
+
+	while(1) {
+		if (xQueueReceive(usartQueue, queueItem, 10) != pdPASS)
+			continue;
+
+		for (i=0,j=0; i<9; i++) {
+			uint16_t t = queueItem[i];
+			outBuff[j++] = hexChars[(t>>12)&0xF];
+			outBuff[j++] = hexChars[(t>>8)&0xF];
+			outBuff[j++] = hexChars[(t>>4)&0xF];
+			outBuff[j++] = hexChars[t & 0xf];
+			if (i<8)
+				outBuff[j++] = ',';
+		}
+		outBuff[j++] = '\r';
+		outBuff[j++] = '\n';
+		outBuff[j++] = '\0';
+		HAL_UART_Transmit(&huart1, outBuff, 36+8+2, 10);
+	}
 }
 /* USER CODE END Application */
 

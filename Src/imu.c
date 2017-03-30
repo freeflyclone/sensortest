@@ -1,5 +1,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 
 #include "main.h"
 #include "usart.h"
@@ -9,6 +10,7 @@
 #include "accel-lsm303dlhc.h"
 
 TaskHandle_t *imuTask;
+extern QueueHandle_t usartQueue;
 
 uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 	uint8_t status = HAL_OK;
@@ -36,9 +38,20 @@ uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
  *   request for I2C data from the respective sensor.
  */
 void ImuRead() {
+	uint8_t imuBuff[18];
+	int i;
+
 	GyroRead();
 	AccelRead();
 	MagRead();
+
+	for(i=0; i<6; i++) {
+		imuBuff[i] = gyro.data[(gyro.pingPong-1)&1][i];
+		imuBuff[i+6] = accel.data[i];
+		imuBuff[i+12] = mag.data[i];
+	}
+
+	xQueueSend(usartQueue, imuBuff, 10);
 }
 
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
