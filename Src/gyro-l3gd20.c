@@ -7,22 +7,27 @@ Gyro_t gyro;
 
 uint8_t GyroInit(I2C_HandleTypeDef *hi2c) {
 	HAL_StatusTypeDef status = HAL_OK;
+	uint8_t cr1 = 0x0F; 	// configure device: ODR:760, Cut-off:100, PD:disabled, X,Y,Z: enabled
 
 	gyro.write = GYRO_WRITE_ADDR;
 	gyro.read = GYRO_READ_ADDR;
 	gyro.hi2c = hi2c;
-	gyro.data[0][0] = CTRL_REG1;
-	gyro.data[0][1] = 0xFF;	// configure device: ODR:760, Cut-off:100, PD:disabled, X,Y,Z: enabled
+	gyro.data[0][0] = CTRL_REG1 | AUTO_INCREMENT;
+	gyro.data[0][1] = cr1;
+	gyro.data[0][2] = 0x0;
+	gyro.data[0][3] = 0x0;
+	gyro.data[0][4] = 0x70;
+	gyro.data[0][5] = 0x02;
 	gyro.pingPong = 0;
 	gyro.readInProgress = 0;
 
-	while ( (status = HAL_I2C_Master_Transmit(gyro.hi2c, gyro.write, gyro.data[0], 2, 20)) != HAL_OK)
+	while ( (status = HAL_I2C_Master_Transmit(gyro.hi2c, gyro.write, gyro.data[0], 6, 20)) != HAL_OK)
 		HAL_Delay(1);
 
 	while ( (status = HAL_I2C_Master_Receive(gyro.hi2c, gyro.read, gyro.data[0], 1, 20)) != HAL_OK)
 		HAL_Delay(1);
 
-	if (gyro.data[0][0] != 0xFF)
+	if (gyro.data[0][1] != cr1)
 		return HAL_ERROR;
 
 	return status;
