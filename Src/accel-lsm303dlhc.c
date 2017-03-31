@@ -8,7 +8,7 @@ Mag_t mag;
 
 uint8_t AccelInit(I2C_HandleTypeDef *hi2c){
 	HAL_StatusTypeDef status = HAL_OK;
-	uint8_t cr1 = 0x47;		// 1.34Khz, NOT Low power, XYZ enabled;
+	uint8_t cr1 = 0x77;		// 1.34Khz, NOT Low power, XYZ enabled;
 
 	accel.write = ACCEL_WRITE_ADDR;
 	accel.read = ACCEL_READ_ADDR;
@@ -17,7 +17,7 @@ uint8_t AccelInit(I2C_HandleTypeDef *hi2c){
 	accel.data[1] = cr1;
 	accel.data[2] = 0;
 	accel.data[3] = 0;
-	accel.data[4] = 0x28;		// enable BDU, +-16G, HRes mode
+	accel.data[4] = 0x28;		// +-8G, HRes mode
 	accel.data[5] = 0;
 
 	while ( (status = HAL_I2C_Master_Transmit(accel.hi2c, accel.write, accel.data, 6, 20)) != HAL_OK)
