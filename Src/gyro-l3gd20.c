@@ -7,7 +7,7 @@ Gyro_t gyro;
 
 uint8_t GyroInit(I2C_HandleTypeDef *hi2c) {
 	HAL_StatusTypeDef status = HAL_OK;
-	uint8_t cr1 = 0x0F; 	// configure device: ODR:760, Cut-off:100, PD:disabled, X,Y,Z: enabled
+	uint8_t cr1 = 0xCF; 	// configure device: ODR:760, Cut-off:30Hz, PD:normal, X,Y,Z: enabled
 
 	gyro.write = GYRO_WRITE_ADDR;
 	gyro.read = GYRO_READ_ADDR;
@@ -16,8 +16,8 @@ uint8_t GyroInit(I2C_HandleTypeDef *hi2c) {
 	gyro.data[0][1] = cr1;
 	gyro.data[0][2] = 0x0;
 	gyro.data[0][3] = 0x0;
-	gyro.data[0][4] = 0x70;
-	gyro.data[0][5] = 0x02;
+	gyro.data[0][4] = 0x30;		// full scale: 2000 degrees/second
+	gyro.data[0][5] = 0x0;
 	gyro.pingPong = 0;
 	gyro.readInProgress = 0;
 
