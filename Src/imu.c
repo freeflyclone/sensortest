@@ -47,8 +47,8 @@ void ImuRead() {
 
 	// byte swap the mag, mag is MSB first
 	for(i=0; i<6; i+=2) {
-		imuBuff[i] = gyro.data[(gyro.pingPong-1)&1][i];
-		imuBuff[i+1] = gyro.data[(gyro.pingPong-1)&1][i+1];
+		imuBuff[i] = gyro.data[i];
+		imuBuff[i+1] = gyro.data[i+1];
 
 		imuBuff[i+6] = accel.data[i];
 		imuBuff[i+6+1] = accel.data[i+1];
