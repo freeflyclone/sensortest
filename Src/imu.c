@@ -45,16 +45,16 @@ void ImuRead() {
 	AccelRead();
 	MagRead();
 
-	// byte swap the gyro & accel data, mag is MSB first
+	// byte swap the mag, mag is MSB first
 	for(i=0; i<6; i+=2) {
-		imuBuff[i] = gyro.data[(gyro.pingPong-1)&1][i+1];
-		imuBuff[i+1] = gyro.data[(gyro.pingPong-1)&1][i];
+		imuBuff[i] = gyro.data[(gyro.pingPong-1)&1][i];
+		imuBuff[i+1] = gyro.data[(gyro.pingPong-1)&1][i+1];
 
-		imuBuff[i+6] = accel.data[i+1];
-		imuBuff[i+6+1] = accel.data[i];
+		imuBuff[i+6] = accel.data[i];
+		imuBuff[i+6+1] = accel.data[i+1];
 
-		imuBuff[i+12] = mag.data[i];
-		imuBuff[i+12+1] = mag.data[i+1];
+		imuBuff[i+12] = mag.data[i+1];
+		imuBuff[i+12+1] = mag.data[i];
 	}
 
 	xQueueSend(usartQueue, imuBuff, 10);

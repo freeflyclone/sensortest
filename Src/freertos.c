@@ -138,7 +138,7 @@ void LEDTask(void *pvParameters) {
 }
 
 void USARTTask(void *pvParameters) {
-	uint16_t queueItem[9];
+	uint8_t queueItem[18];
 	uint8_t outBuff[36+8+2+1];
 	static uint8_t hexChars[] = "0123456789ABCDEF";
 	int i,j;
@@ -152,13 +152,11 @@ void USARTTask(void *pvParameters) {
 		if (xQueueReceive(usartQueue, queueItem, 10) != pdPASS)
 			continue;
 
-		for (i=0,j=0; i<9; i++) {
+		for (i=0,j=0; i<18; i++) {
 			uint16_t t = queueItem[i];
-			outBuff[j++] = hexChars[(t>>12)&0xF];
-			outBuff[j++] = hexChars[(t>>8)&0xF];
 			outBuff[j++] = hexChars[(t>>4)&0xF];
 			outBuff[j++] = hexChars[t & 0xf];
-			if (i<8)
+			if (i<17 && (i&1)==1)
 				outBuff[j++] = ',';
 		}
 		outBuff[j++] = '\r';
