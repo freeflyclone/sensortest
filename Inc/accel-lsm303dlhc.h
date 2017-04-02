@@ -65,7 +65,13 @@ typedef struct _Accel_t {
 	I2C_HandleTypeDef *hi2c;
 	uint16_t write;
 	uint16_t read;
-	uint8_t data[16];
+	union {
+		uint8_t data[8];
+		int16_t shorts[4];
+		struct {
+			int16_t x,y,z,w;
+		};
+	};
 } Accel_t;
 
 extern Accel_t accel;
@@ -76,7 +82,13 @@ typedef struct _Mag_t {
 	I2C_HandleTypeDef *hi2c;
 	uint16_t write;
 	uint16_t read;
-	uint8_t data[16];
+	union {
+		uint8_t data[8];
+		int16_t shorts[4];
+		struct {
+			int16_t x,y,z,w;
+		};
+	};
 } Mag_t;
 
 extern Mag_t mag;
