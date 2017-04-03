@@ -139,7 +139,7 @@ void LEDTask(void *pvParameters) {
 
 void USARTTask(void *pvParameters) {
 	uint8_t queueItem[18];
-	uint8_t outBuff[36+8+2+1];
+	uint8_t outBuff[36+2];
 	static uint8_t hexChars[] = "0123456789ABCDEF";
 	int i,j;
 
@@ -156,13 +156,10 @@ void USARTTask(void *pvParameters) {
 			uint16_t t = queueItem[i];
 			outBuff[j++] = hexChars[(t>>4)&0xF];
 			outBuff[j++] = hexChars[t & 0xf];
-			if (i<17 && (i&1)==1)
-				outBuff[j++] = ',';
 		}
 		outBuff[j++] = '\r';
 		outBuff[j++] = '\n';
-		outBuff[j++] = '\0';
-		HAL_UART_Transmit(&huart1, outBuff, 36+8+2, 10);
+		HAL_UART_Transmit(&huart1, outBuff, 36+2, 10);
 	}
 }
 /* USER CODE END Application */

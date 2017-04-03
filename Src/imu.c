@@ -58,6 +58,7 @@ void ImuRead() {
 	}
 
 	xQueueSend(usartQueue, imuBuff, 10);
+	HAL_Delay(3);
 }
 
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
