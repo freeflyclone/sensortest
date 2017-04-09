@@ -8,6 +8,7 @@
 
 #include "gyro-l3gd20.h"
 #include "accel-lsm303dlhc.h"
+#include "MadgwickAHRS.h"
 
 TaskHandle_t *imuTask;
 extern QueueHandle_t usartQueue;
@@ -40,10 +41,20 @@ uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 void ImuRead() {
 	uint8_t imuBuff[18];
 	int i;
+	float gx,gy,gz,ax,ay,az;
 
 	GyroRead();
 	AccelRead();
 	MagRead();
+
+	gx = (float)gyro.x;
+	gy = (float)gyro.y;
+	gz = (float)gyro.z;
+	ax = (float)accel.x;
+	ay = (float)accel.y;
+	az = (float)accel.z;
+
+	MadgwickAHRSupdateIMU(gx,gy,gz,ax,ay,az);
 
 	// byte swap the mag, mag is MSB first
 	for(i=0; i<6; i+=2) {
