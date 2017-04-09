@@ -65,6 +65,8 @@ osThreadId imuTaskHandle;
 TaskHandle_t ledTaskHandle;
 TaskHandle_t imuTaskHandle;
 TaskHandle_t usartTaskHandle;
+
+QueueHandle_t ahrsOutputQueue;
 QueueHandle_t usartQueue;
 /* USER CODE END Variables */
 
@@ -144,6 +146,9 @@ void USARTTask(void *pvParameters) {
 	int i,j;
 
 	if ( (usartQueue = xQueueCreate(4, 18)) == NULL)
+		return;
+
+	if ( (ahrsOutputQueue = xQueueCreate(4, 4*sizeof(float))) == NULL)
 		return;
 
 	HAL_UART_Transmit(&huart1, (uint8_t*)"USARTTask init complete\r\n", 25, 10);

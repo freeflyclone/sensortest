@@ -12,6 +12,7 @@
 
 TaskHandle_t *imuTask;
 extern QueueHandle_t usartQueue;
+extern QueueHandle_t ahrsOutputQueue;
 
 uint8_t ImuInit(I2C_HandleTypeDef *hi2c) {
 	uint8_t status = HAL_OK;
@@ -55,6 +56,8 @@ void ImuRead() {
 	az = (float)accel.z;
 
 	MadgwickAHRSupdateIMU(gx,gy,gz,ax,ay,az);
+
+	xQueueSend(ahrsOutputQueue, q, 0);
 
 	// byte swap the mag, mag is MSB first
 	for(i=0; i<6; i+=2) {
